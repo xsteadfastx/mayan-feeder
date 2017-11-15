@@ -1,0 +1,2 @@
+recursive-include src/mayan_feeder/templates *
+recursive-include src/mayan_feeder/static *

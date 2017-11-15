@@ -1,0 +1,28 @@
+language: python
+
+matrix:
+  include:
+
+    # PYTHON VERSIONS
+    - python: '3.4'
+      env: TOXENV=py34
+    - python: '3.5'
+      env: TOXENV=py35
+    - python: '3.6'
+      env: TOXENV=py36
+
+    # META
+    - python: '3.6'
+      env: TOXENV=flake8
+    - python: '3.6'
+      env: TOXENV=pylint
+    - python: '3.6'
+      env: TOXENV=mypy
+
+install:
+  - travis_retry pip install tox
+
+script: tox -v
+
+after_success:
+  - test $TOXENV = "py36" && tox -e codecov

@@ -1,0 +1,30 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[packages]
+
+flask = "*"
+flask-socketio = "*"
+requests = "*"
+flask-bootstrap = "*"
+flask-wtf = "*"
+click = "*"
+attrs = "*"
+pyyaml = "*"
+maya = "*"
+
+
+[dev-packages]
+
+"flake8" = "*"
+pylint = "*"
+mypy = "*"
+tox = "*"
+pytest = "*"
+coverage = "*"
+pex = "*"
+codecov = "*"

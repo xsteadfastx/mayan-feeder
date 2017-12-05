@@ -27,7 +27,8 @@ def root():
         doc = document.Document(
             settings['mayan']['url'],
             settings['mayan']['username'],
-            settings['mayan']['password']
+            settings['mayan']['password'],
+            form.cabinets.data,
         )
         doc.process()
 

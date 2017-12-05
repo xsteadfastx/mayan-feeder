@@ -25,13 +25,22 @@ class Document(object):
     username: str = attr.ib()
     password: str = attr.ib()
 
-    pdf_filename: str = attr.ib(init=False)
-    now: maya.core.MayaDT = maya.now()
+    cabinets: List[str] = attr.ib()
+
+    now: maya.core.MayaDT = attr.ib(init=False)
+
     tempdir: str = attr.ib(init=False)
+
+    pdf_filename: str = attr.ib(init=False)
     pdf_file_path: str = attr.ib(init=False)
+    document_id: int = attr.ib(init=False)
+
     mayan_handler: mayan.MayanHandler = attr.ib(init=False)
 
     def __attrs_post_init__(self) -> None:
+        # time
+        self.now = maya.now()
+
         # filename
         self.pdf_filename = (
             f'{self.now.year}'
@@ -60,7 +69,17 @@ class Document(object):
     def upload(self) -> None:
         """Upload to Mayan EDMS."""
         try:
-            self.mayan_handler.upload(self.pdf_file_path)
+            response = self.mayan_handler.upload(self.pdf_file_path)
+            self.document_id = int(response['id'])
+        except BaseException as exception:
+            LOG.exception(str(exception))
+
+    def add_to_cabinets(self) -> None:
+        """Add PDF to cabinets."""
+        try:
+            for cabinet in iter(self.cabinets):
+                LOG.debug('adding to cabinet %s...', cabinet)
+                self.mayan_handler.add_to_cabinet(cabinet, self.document_id)
         except BaseException as exception:
             LOG.exception(str(exception))
 
@@ -82,8 +101,13 @@ class Document(object):
         LOG.info('uploading PDF...')
         self.upload()
 
+        LOG.info('adding to cabinets...')
+        self.add_to_cabinets()
+
         LOG.debug('remove %s...', self.tempdir)
         rmtree(self.tempdir)
+
+        LOG.info('Done!')
 
     def scanning(self) -> None:
         """Scan in a seperated thread."""

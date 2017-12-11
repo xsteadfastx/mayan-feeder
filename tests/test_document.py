@@ -31,3 +31,26 @@ def test_init(mock_datetime, mock_mayan_handler, mock_mkdtemp):
     assert document.pdf_filename == '20170008000000.pdf'
     assert document.tempdir == '/tmp/footmp'
     assert document.pdf_file_path == '/tmp/footmp/20170008000000.pdf'
+
+
+@patch('mayan_feeder.document.mayan.MayanHandler', autospec=True)
+def test_upload(mock_mayan_handler):
+    mock_mayan_handler.return_value.upload.return_value = {
+        'id': 77
+    }
+
+    document = Document(*DOCUMENT_CONFIG)
+    document.upload()
+
+    assert document.document_id == 77
+
+
+@patch('mayan_feeder.document.mayan.MayanHandler')
+@patch('mayan_feeder.document.LOG')
+def test_upload_exception(mock_log, mock_mayan_handler):
+    mock_mayan_handler.return_value.upload.side_effect = IndexError('foo')
+
+    document = Document(*DOCUMENT_CONFIG)
+    document.upload()
+
+    mock_log.exception.assert_called_with('foo')

@@ -7,15 +7,14 @@ name = "pypi"
 
 [packages]
 
-flask = "*"
-flask-socketio = "*"
+Flask = "*"
+Flask-SocketIO = "*"
 requests = "*"
-flask-bootstrap = "*"
-flask-wtf = "*"
+Flask-Bootstrap = "*"
+Flask-WTF = "*"
 click = "*"
 attrs = "*"
-pyyaml = "*"
-maya = "*"
+PyYAML = "*"
 
 
 [dev-packages]

@@ -34,3 +34,10 @@ CABINETS_LIST_0 = {
         }
     ]
 }
+
+DOCUMENT_CONFIG = [
+    'http://foo.bar:81',
+    'admin',
+    'barfoo',
+    ['1']
+]

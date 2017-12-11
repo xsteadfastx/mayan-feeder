@@ -4,13 +4,13 @@ import logging
 import os
 import subprocess
 import tempfile
+from datetime import datetime
 from shutil import rmtree
 from threading import Thread
 from time import sleep
 from typing import List
 
 import attr
-import maya
 
 from mayan_feeder import mayan, utils
 
@@ -27,7 +27,7 @@ class Document(object):
 
     cabinets: List[str] = attr.ib()
 
-    now: maya.core.MayaDT = attr.ib(init=False)
+    now: datetime = attr.ib(init=False)
 
     tempdir: str = attr.ib(init=False)
 
@@ -39,19 +39,10 @@ class Document(object):
 
     def __attrs_post_init__(self) -> None:
         # time
-        self.now = maya.now()
+        self.now = datetime.now()
 
         # filename
-        self.pdf_filename = (
-            f'{self.now.year}'
-            f'{self.now.month}'
-            f'{self.now.day}'
-            f'{self.now.hour}'
-            f'{self.now.minute}'
-            f'{self.now.second}'
-            '.pdf'
-        )
-
+        self.pdf_filename = '{}.pdf'.format(self.now.strftime('%Y%H%d%H%M%S'))
         # tempdir
         self.tempdir = str(tempfile.mkdtemp())
 

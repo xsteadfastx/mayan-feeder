@@ -90,3 +90,13 @@ def test_add_to_cabinets_exception(mock_log, mock_mayan_handler):
     document.add_to_cabinets()
 
     mock_log.exception.assert_called_with('foo')
+
+
+@patch('mayan_feeder.document.Thread', autospec=True)
+@patch('mayan_feeder.document.LOG', autospec=True)
+def test_process(mock_log, mock_thread):
+    document = Document(*DOCUMENT_CONFIG)
+    document.process()
+
+    mock_log.debug.assert_called_with('starting thread...')
+    mock_thread.return_value.start.assert_called()

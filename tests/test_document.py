@@ -3,19 +3,22 @@
 from datetime import datetime
 from unittest.mock import call, patch
 
-from data import DOCUMENT_CONFIG
-
 from mayan_feeder.document import Document
 
 
 @patch('mayan_feeder.document.tempfile.mkdtemp', autospec=True)
 @patch('mayan_feeder.document.mayan.MayanHandler', autospec=True)
 @patch('mayan_feeder.document.datetime', autospec=True)
-def test_init(mock_datetime, mock_mayan_handler, mock_mkdtemp):
+def test_init(
+        mock_datetime,
+        mock_mayan_handler,
+        mock_mkdtemp,
+        document_config
+):
     mock_datetime.now.return_value = datetime(2017, 12, 8, 0, 0, 0, 0)
     mock_mkdtemp.return_value = '/tmp/footmp'
 
-    document = Document(*DOCUMENT_CONFIG)
+    document = Document(*document_config)
 
     mock_mayan_handler.assert_called_with(
         'http://foo.bar:81',
@@ -34,12 +37,12 @@ def test_init(mock_datetime, mock_mayan_handler, mock_mkdtemp):
 
 
 @patch('mayan_feeder.document.mayan.MayanHandler', autospec=True)
-def test_upload(mock_mayan_handler):
+def test_upload(mock_mayan_handler, document_config):
     mock_mayan_handler.return_value.upload.return_value = {
         'id': 77
     }
 
-    document = Document(*DOCUMENT_CONFIG)
+    document = Document(*document_config)
     document.upload()
 
     assert document.document_id == 77
@@ -47,10 +50,10 @@ def test_upload(mock_mayan_handler):
 
 @patch('mayan_feeder.document.mayan.MayanHandler', autospec=True)
 @patch('mayan_feeder.document.LOG', autospec=True)
-def test_upload_exception(mock_log, mock_mayan_handler):
+def test_upload_exception(mock_log, mock_mayan_handler, document_config):
     mock_mayan_handler.return_value.upload.side_effect = IndexError('foo')
 
-    document = Document(*DOCUMENT_CONFIG)
+    document = Document(*document_config)
     document.upload()
 
     mock_log.exception.assert_called_with('foo')
@@ -58,12 +61,12 @@ def test_upload_exception(mock_log, mock_mayan_handler):
 
 @patch('mayan_feeder.document.mayan.MayanHandler', autospec=True)
 @patch('mayan_feeder.document.LOG', autospec=True)
-def test_add_to_cabinets(mock_log, mock_mayan_handler):
+def test_add_to_cabinets(mock_log, mock_mayan_handler, document_config):
     mock_mayan_handler.return_value.upload.return_value = {
         'id': 77
     }
 
-    document = Document(*DOCUMENT_CONFIG)
+    document = Document(*document_config)
     document.upload()
 
     document.add_to_cabinets()
@@ -81,11 +84,15 @@ def test_add_to_cabinets(mock_log, mock_mayan_handler):
 
 @patch('mayan_feeder.document.mayan.MayanHandler', autospec=True)
 @patch('mayan_feeder.document.LOG', autospec=True)
-def test_add_to_cabinets_exception(mock_log, mock_mayan_handler):
+def test_add_to_cabinets_exception(
+        mock_log,
+        mock_mayan_handler,
+        document_config
+):
     mock_mayan_handler.return_value.add_to_cabinet.side_effect = \
         IndexError('foo')
 
-    document = Document(*DOCUMENT_CONFIG)
+    document = Document(*document_config)
     document.upload()
     document.add_to_cabinets()
 
@@ -94,8 +101,8 @@ def test_add_to_cabinets_exception(mock_log, mock_mayan_handler):
 
 @patch('mayan_feeder.document.Thread', autospec=True)
 @patch('mayan_feeder.document.LOG', autospec=True)
-def test_process(mock_log, mock_thread):
-    document = Document(*DOCUMENT_CONFIG)
+def test_process(mock_log, mock_thread, document_config):
+    document = Document(*document_config)
     document.process()
 
     mock_log.debug.assert_called_with('starting thread...')
@@ -120,10 +127,11 @@ def test_process_thread(
         mock_upload,
         mock_add_to_cabinets,
         mock_mkdtemp,
+        document_config
 ):
     mock_mkdtemp.return_value = '/tmp/footmp'
 
-    document = Document(*DOCUMENT_CONFIG)
+    document = Document(*document_config)
 
     document.process_thread()
 

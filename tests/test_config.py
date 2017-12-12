@@ -100,3 +100,19 @@ def test_get_missing_mayan_keys(
     mock_echo.assert_called_with(
         'Missing url, username or password in mayan settings!'
     )
+
+
+@patch('mayan_feeder.config.Path')
+@patch('mayan_feeder.config.echo')
+def test_get_missing_mayan_key(mock_echo, mock_path, tmpdir):
+    mock_path.home.return_value = Path(tmpdir.strpath)
+
+    config_file = tmpdir.join('.mayanfeeder.yaml')
+    config_file.write(yaml.dump({}))
+
+    with pytest.raises(SystemExit):
+        config.get()
+
+    mock_echo.assert_called_with(
+        'No mayan section in config!'
+    )

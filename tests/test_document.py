@@ -1,7 +1,7 @@
 # pylint: disable=missing-docstring
 
 from datetime import datetime
-from unittest.mock import patch
+from unittest.mock import call, patch
 
 from data import DOCUMENT_CONFIG
 
@@ -100,3 +100,49 @@ def test_process(mock_log, mock_thread):
 
     mock_log.debug.assert_called_with('starting thread...')
     mock_thread.return_value.start.assert_called()
+
+
+# pylint: disable=too-many-arguments
+@patch('mayan_feeder.document.tempfile.mkdtemp', autospec=True)
+@patch('mayan_feeder.document.Document.add_to_cabinets')
+@patch('mayan_feeder.document.Document.upload')
+@patch('mayan_feeder.document.Document.create_pdf')
+@patch('mayan_feeder.document.Document.scanning')
+@patch('mayan_feeder.document.LOG')
+@patch('mayan_feeder.document.rmtree')
+@patch('mayan_feeder.document.sleep')
+def test_process_thread(
+        mock_sleep,
+        mock_rmtree,
+        mock_log,
+        mock_scanning,
+        mock_create_pdf,
+        mock_upload,
+        mock_add_to_cabinets,
+        mock_mkdtemp,
+):
+    mock_mkdtemp.return_value = '/tmp/footmp'
+
+    document = Document(*DOCUMENT_CONFIG)
+
+    document.process_thread()
+
+    mock_sleep.assert_called_once_with(5)
+    mock_scanning.assert_called_once()
+    mock_create_pdf.assert_called_once()
+    mock_upload.assert_called_once()
+    mock_add_to_cabinets.assert_called_once()
+    mock_rmtree.assert_called_once_with('/tmp/footmp')
+
+    assert mock_log.info.mock_calls == [
+        call('scanning...'),
+        call('creating PDF...'),
+        call('uploading PDF...'),
+        call('adding to cabinets...'),
+        call('Done!')
+    ]
+
+    assert mock_log.debug.mock_calls == [
+        call('creating mayan handler...'),
+        call('remove %s...', '/tmp/footmp')
+    ]

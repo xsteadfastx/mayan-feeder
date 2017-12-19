@@ -31,9 +31,9 @@ def test_init(
     assert document.password == 'barfoo'
     assert document.cabinets == ['1']
     assert document.now == datetime(2017, 12, 8, 0, 0)
-    assert document.pdf_filename == '20170008000000.pdf'
+    assert document.pdf_filename == '20171208000000.pdf'
     assert document.tempdir == '/tmp/footmp'
-    assert document.pdf_file_path == '/tmp/footmp/20170008000000.pdf'
+    assert document.pdf_file_path == '/tmp/footmp/20171208000000.pdf'
 
 
 @patch('mayan_feeder.document.mayan.MayanHandler', autospec=True)
@@ -208,5 +208,88 @@ def test_scanning_exception(mock_log, mock_chdir, document_config):
 
     document = Document(*document_config)
     document.scanning()
+
+    mock_log.exception.assert_called_with(str(sentinel.error))
+
+
+@patch('mayan_feeder.document.datetime', autospec=True)
+@patch('mayan_feeder.document.subprocess', autospec=True)
+@patch('mayan_feeder.document.utils.ChDir')
+@patch('mayan_feeder.document.LOG')
+@patch('mayan_feeder.document.tempfile.mkdtemp', autospec=True)
+@patch('mayan_feeder.document.os', autospec=True)
+def test_create_pdf(
+        mock_os,
+        mock_mkdtemp,
+        mock_log,
+        mock_chdir,
+        mock_subprocess,
+        mock_datetime,
+        document_config
+):
+    mock_mkdtemp.return_value = sentinel.tmpdir
+
+    mock_os.path.isfile.return_value = True
+
+    mock_os.listdir.return_value = ['1.tiff']
+
+    mock_datetime.now.return_value = datetime(2017, 12, 8, 0, 0, 0, 0)
+
+    document = Document(*document_config)
+    document.create_pdf()
+
+    mock_chdir.assert_called_with(str(sentinel.tmpdir))
+
+    stdout = mock_subprocess.Popen.return_value.__enter__.return_value.\
+        stdout.read.return_value.decode.return_value
+
+    assert mock_log.mock_calls == [
+        call.debug('creating mayan handler...'),
+        call.debug('found: \n%s', '1.tiff'),
+        call.debug('command list: %s', ['tiffcp', '1.tiff', 'complete.tif']),
+        call.debug('%s', stdout),
+        call.debug('%s', stdout),
+    ]
+
+    assert call(
+        ['tiffcp', '1.tiff', 'complete.tif'],
+        stdout=mock_subprocess.PIPE,
+        stderr=mock_subprocess.STDOUT
+    ) in mock_subprocess.mock_calls
+
+    assert call(
+        ['tiff2pdf', '-o', '20171208000000.pdf', 'complete.tif'],
+        stdout=mock_subprocess.PIPE,
+        stderr=mock_subprocess.STDOUT
+    ) in mock_subprocess.mock_calls
+
+
+# pylint: disable=invalid-name
+@patch('mayan_feeder.document.tempfile.mkdtemp', autospec=True)
+@patch('mayan_feeder.document.LOG', autospec=True)
+@patch('mayan_feeder.document.os', autospec=True)
+def test_create_pdf_not_enough_pages(
+        mock_os,
+        mock_log,
+        mock_mkdtemp,
+        document_config
+):
+    mock_mkdtemp.return_value = sentinel.tmpdir
+
+    mock_os.listdir.return_value = []
+
+    document = Document(*document_config)
+    document.create_pdf()
+
+    mock_log.error.assert_called_with('not enough pages')
+
+
+@patch('mayan_feeder.document.LOG', autospec=True)
+@patch('mayan_feeder.document.os', autospec=True)
+def test_create_pdf_exception(mock_os, mock_log, document_config):
+    mock_os.listdir.side_effect = IndexError(sentinel.error)
+
+    document = Document(*document_config)
+    document.create_pdf()
 
     mock_log.exception.assert_called_with(str(sentinel.error))

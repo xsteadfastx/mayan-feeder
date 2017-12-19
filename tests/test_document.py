@@ -1,7 +1,7 @@
 # pylint: disable=missing-docstring
 
 from datetime import datetime
-from unittest.mock import call, patch
+from unittest.mock import call, patch, sentinel
 
 from mayan_feeder.document import Document
 
@@ -154,3 +154,59 @@ def test_process_thread(
         call('creating mayan handler...'),
         call('remove %s...', '/tmp/footmp')
     ]
+
+
+@patch('mayan_feeder.document.utils.ChDir', autospec=True)
+@patch('mayan_feeder.document.tempfile.mkdtemp', autospec=True)
+@patch('mayan_feeder.document.subprocess', autospec=True)
+@patch('mayan_feeder.document.LOG', autospec=True)
+def test_scanning(
+        mock_log,
+        mock_subprocess,
+        mock_mkdtemp,
+        mock_chdir,
+        document_config
+):
+    mock_mkdtemp.return_value = '/tmp/footmp'
+
+    mock_subprocess.Popen.return_value.\
+        __enter__.return_value.\
+        stdout.read.return_value.\
+        decode.return_value = 'foo'
+
+    document = Document(*document_config)
+    document.scanning()
+
+    mock_subprocess.Popen.assert_called_with(
+        [
+            'scanimage',
+            '-y', '279.4',
+            '-x', '215.9',
+            '--batch',
+            '--format=tiff',
+            '--mode', 'Gray',
+            '--resolution', '300',
+            '--source', 'ADF Duplex'
+        ],
+        stdout=mock_subprocess.PIPE,
+        stderr=mock_subprocess.STDOUT
+    )
+
+    assert mock_log.debug.mock_calls == [
+        call('creating mayan handler...'),
+        call('scanning to %s', '/tmp/footmp'),
+        call('%s', 'foo')
+    ]
+
+    mock_chdir.assert_called_with('/tmp/footmp')
+
+
+@patch('mayan_feeder.document.utils.ChDir')
+@patch('mayan_feeder.document.LOG')
+def test_scanning_exception(mock_log, mock_chdir, document_config):
+    mock_chdir.side_effect = IndexError(sentinel.error)
+
+    document = Document(*document_config)
+    document.scanning()
+
+    mock_log.exception.assert_called_with(str(sentinel.error))

@@ -21,7 +21,7 @@ class MayanHandler(object):
         """Joins Mayan url with endpoint."""
         return urljoin(self.url, endpoint)
 
-    def r_get(self, endpoint: str) -> Dict:
+    def r_get(self, endpoint: str) -> Dict:  # pragma: no cover
         """GET request on Mayan API."""
         url = self.create_url(endpoint)
         LOG.debug('GET on url: %s', url)
@@ -45,7 +45,7 @@ class MayanHandler(object):
             endpoint: str,
             data: Dict,
             files: Union[None, Dict[str, BinaryIO]]
-    ) -> Dict:
+    ) -> Dict:  # pragma: no cover
         """POST request on Mayan API."""
 
         url = self.create_url(endpoint)
@@ -67,7 +67,7 @@ class MayanHandler(object):
 
         return response_data
 
-    def cabinets(self) -> Dict:
+    def cabinets(self) -> Dict:  # pragma: no cover
         """Getting all cabinets from API."""
         LOG.debug('get cabinets from api...')
 
@@ -75,7 +75,11 @@ class MayanHandler(object):
 
         return data
 
-    def add_to_cabinet(self, cabinet_id: str, document_id: int) -> None:
+    def add_to_cabinet(
+            self,
+            cabinet_id: str,
+            document_id: int
+    ) -> None:  # pragma: no cover
         "Add document to cabinet."
         LOG.debug(
             'add to document %s to cabinet %s',
@@ -91,7 +95,10 @@ class MayanHandler(object):
             files=None
         )
 
-    def upload(self, pdf_file_path: str) -> Dict[str, Union[int, str]]:
+    def upload(
+            self,
+            pdf_file_path: str
+    ) -> Dict[str, Union[int, str]]:  # pragma: no cover
         """Upload PDF file to Mayan API."""
 
         with open(pdf_file_path, 'rb') as pdf_file:

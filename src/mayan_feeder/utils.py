@@ -7,7 +7,7 @@ import webbrowser
 LOG = logging.getLogger(__name__)
 
 
-def open_browser() -> None:
+def open_browser() -> None:  # pragma: no cover
     """Open app in browser."""
     LOG.info('Open browser...')
     webbrowser.open('http://127.0.0.1:5000')

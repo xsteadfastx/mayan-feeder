@@ -1,7 +1,6 @@
 # pylint: disable=missing-docstring
 
 import pytest
-from click.testing import CliRunner
 
 from mayan_feeder import cli
 

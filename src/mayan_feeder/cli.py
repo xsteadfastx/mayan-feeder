@@ -38,8 +38,9 @@ def main(verbose: int) -> None:
     # selfcheck if all needed commands are available
     if not utils.commands_available(
             [
-                'convert'
                 'scanimage',
+                'tiffcp',
+                'tiff2pdf',
             ]
     ):
         LOG.error(

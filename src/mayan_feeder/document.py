@@ -86,6 +86,9 @@ class Document(object):
         LOG.info('scanning...')
         self.scanning()
 
+        LOG.info('removing blanks...')
+        self.remove_blanks()
+
         LOG.info('creating PDF...')
         self.create_pdf()
 
@@ -132,17 +135,7 @@ class Document(object):
         """Creating pdf from tiff files."""
         try:
 
-            pages = [
-                str(i)
-                for i in os.listdir(self.tempdir)
-                if os.path.isfile(
-                    os.path.join(
-                        self.tempdir,
-                        i
-                    )
-                )
-            ]
-            LOG.debug('found: \n%s', '\n'.join(pages))
+            pages = self.pages
 
             if len(pages) >= 1:
 
@@ -180,3 +173,29 @@ class Document(object):
 
         except BaseException as exception:
             LOG.exception(str(exception))
+
+    def remove_blanks(self) -> None:
+        """Remove blanks."""
+        try:
+            for page in self.pages:
+                if utils.is_blank(page):
+                    os.remove(page)
+        except BaseException as exception:
+            LOG.exception(str(exception))
+
+    @property
+    def pages(self) -> List[str]:
+        """List of all scanned pages."""
+        page_list = [
+            str(i)
+            for i in os.listdir(self.tempdir)
+            if os.path.isfile(
+                os.path.join(
+                    self.tempdir,
+                    i
+                )
+            )
+        ]
+        LOG.debug('found: \n%s', '\n'.join(page_list))
+
+        return page_list

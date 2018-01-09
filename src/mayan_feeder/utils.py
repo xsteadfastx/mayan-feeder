@@ -6,6 +6,8 @@ import webbrowser
 from distutils import spawn  # pylint: disable=no-name-in-module
 from typing import List
 
+from PIL import Image
+
 LOG = logging.getLogger(__name__)
 
 
@@ -35,3 +37,22 @@ class ChDir(object):
 def commands_available(commands: List[str]) -> bool:
     """Check if needed commands are available."""
     return all([spawn.find_executable(command) for command in commands])
+
+
+def is_blank(image_file: str) -> bool:
+    """Checks if image is blank.
+
+    Thanks to:
+    https://stackoverflow.com/a/18778280
+    https://www.splitbrain.org/blog/2014-08/24-paper_backup_2_automation_scripts
+    """
+    image = Image.open(image_file)
+    black_white = image.point(lambda x: 0 if x < 128 else 255, '1')
+
+    black = black_white.histogram()[0]
+    white = black_white.histogram()[-1]
+
+    if black / white < 0.005:
+        return True
+
+    return False

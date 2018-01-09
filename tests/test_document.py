@@ -144,6 +144,7 @@ def test_process_thread(
 
     assert mock_log.info.mock_calls == [
         call('scanning...'),
+        call('removing blanks...'),
         call('creating PDF...'),
         call('uploading PDF...'),
         call('adding to cabinets...'),
@@ -293,3 +294,80 @@ def test_create_pdf_exception(mock_os, mock_log, document_config):
     document.create_pdf()
 
     mock_log.exception.assert_called_with(str(sentinel.error))
+
+
+@patch('mayan_feeder.document.datetime', autospec=True)
+@patch('mayan_feeder.document.os', autospec=True)
+@patch('mayan_feeder.document.tempfile.mkdtemp', autospec=True)
+@patch('mayan_feeder.document.LOG')
+def test_pages(
+        mock_log,
+        mock_mkdtemp,
+        mock_os,
+        mock_datetime,
+        document_config
+):
+    mock_mkdtemp.return_value = sentinel.tmpdir
+
+    mock_os.path.isfile.return_value = True
+
+    mock_os.listdir.return_value = ['1.tiff', '2.tiff']
+
+    mock_datetime.now.return_value = datetime(2018, 1, 15, 0, 0, 0, 0)
+
+    document = Document(*document_config)
+
+    assert document.pages == ['1.tiff', '2.tiff']
+
+    assert mock_log.debug.call_args_list == [
+        call('creating mayan handler...'),
+        call('found: \n%s', '1.tiff\n2.tiff')
+    ]
+
+
+@patch('mayan_feeder.document.Document.pages')
+@patch('mayan_feeder.document.os.remove')
+@patch('mayan_feeder.document.utils.is_blank')
+@patch('mayan_feeder.document.tempfile.mkdtemp', autospec=True)
+def test_remove_blanks(
+        mock_mkdtemp,
+        mock_is_blank,
+        mock_remove,
+        mock_pages,  # pylint: disable=unused-argument
+        document_config,
+):
+    mock_mkdtemp.return_value = sentinel.tmpdir
+
+    mock_is_blank.return_value = True
+
+    document = Document(*document_config)
+
+    document.pages = ['1.tiff']
+
+    document.remove_blanks()
+
+    mock_remove.assert_called_once_with('1.tiff')
+
+
+@patch('mayan_feeder.document.LOG')
+@patch('mayan_feeder.document.Document.pages')
+@patch('mayan_feeder.document.utils.is_blank')
+@patch('mayan_feeder.document.tempfile.mkdtemp', autospec=True)
+def test_remove_blanks_exception(
+        mock_mkdtemp,
+        mock_is_blank,
+        mock_pages,  # pylint: disable=unused-argument
+        mock_log,
+        document_config
+):
+    mock_mkdtemp.return_value = sentinel.tmpdir
+
+    mock_is_blank.side_effect = IndexError('foo')
+
+    document = Document(*document_config)
+
+    document.pages = ['1.tiff']
+
+    document.remove_blanks()
+
+    mock_log.exception.assert_called_once_with('foo')

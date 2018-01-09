@@ -1,6 +1,7 @@
 """Cli."""
 
 import logging
+import sys
 import threading
 
 import click
@@ -33,6 +34,21 @@ def main(verbose: int) -> None:
     from mayan_feeder import logger, utils, web
 
     logging.getLogger().addHandler(logger.SocketIOHandler())
+
+    # selfcheck if all needed commands are available
+    if not utils.commands_available(
+            [
+                'convert'
+                'scanimage',
+            ]
+    ):
+        LOG.error(
+            (
+                'Could not find needed commands! '
+                'Please install convert and scanimage'
+            )
+        )
+        sys.exit(1)
 
     LOG.debug('Adding timer thread to start Browser...')
     threading.Timer(

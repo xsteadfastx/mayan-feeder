@@ -2,6 +2,8 @@
 
 from unittest.mock import call, patch
 
+import pytest
+
 from mayan_feeder import utils
 
 
@@ -22,3 +24,20 @@ def test_chdir(mock_os, mock_log):
         call('enter %s...', '/tmp/foo'),
         call('enter %s again...', '/tmp/bar')
     ]
+
+
+@pytest.mark.parametrize('commands,expected', [
+    (
+        [True, True],
+        True
+    ),
+    (
+        [False, True],
+        False
+    )
+])
+@patch('mayan_feeder.utils.spawn')
+def test_commands_available(mock_spawn, commands, expected):
+    mock_spawn.find_executable.side_effect = commands
+
+    assert utils.commands_available(['foo', 'bar']) == expected

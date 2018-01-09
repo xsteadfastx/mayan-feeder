@@ -3,6 +3,8 @@
 import logging
 import os
 import webbrowser
+from distutils import spawn  # pylint: disable=no-name-in-module
+from typing import List
 
 LOG = logging.getLogger(__name__)
 
@@ -28,3 +30,8 @@ class ChDir(object):
     def __exit__(self, *args):
         LOG.debug('enter %s again...', self.old_dir)
         os.chdir(self.old_dir)
+
+
+def commands_available(commands: List[str]) -> bool:
+    """Check if needed commands are available."""
+    return all([spawn.find_executable(command) for command in commands])

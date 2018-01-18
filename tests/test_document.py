@@ -218,9 +218,11 @@ def test_scanning_exception(mock_log, mock_chdir, document_config):
 @patch('mayan_feeder.document.utils.ChDir')
 @patch('mayan_feeder.document.LOG')
 @patch('mayan_feeder.document.tempfile.mkdtemp', autospec=True)
-@patch('mayan_feeder.document.os', autospec=True)
+@patch('mayan_feeder.document.os.path.isfile', autospec=True)
+@patch('mayan_feeder.document.os.listdir', autospec=True)
 def test_create_pdf(
-        mock_os,
+        mock_listdir,
+        mock_isfile,
         mock_mkdtemp,
         mock_log,
         mock_chdir,
@@ -228,32 +230,32 @@ def test_create_pdf(
         mock_datetime,
         document_config
 ):
-    mock_mkdtemp.return_value = sentinel.tmpdir
+    mock_mkdtemp.return_value = '/tmp/foo'
 
-    mock_os.path.isfile.return_value = True
+    mock_isfile.return_value = True
 
-    mock_os.listdir.return_value = ['1.tiff']
+    mock_listdir.return_value = ['1.tiff']
 
     mock_datetime.now.return_value = datetime(2017, 12, 8, 0, 0, 0, 0)
 
     document = Document(*document_config)
     document.create_pdf()
 
-    mock_chdir.assert_called_with(str(sentinel.tmpdir))
+    mock_chdir.assert_called_with('/tmp/foo')
 
     stdout = mock_subprocess.Popen.return_value.__enter__.return_value.\
         stdout.read.return_value.decode.return_value
 
     assert mock_log.mock_calls == [
         call.debug('creating mayan handler...'),
-        call.debug('found: \n%s', '1.tiff'),
-        call.debug('command list: %s', ['tiffcp', '1.tiff', 'complete.tif']),
+        call.debug('found: \n%s', '/tmp/foo/1.tiff'),
+        call.debug('command list: %s', ['tiffcp', '/tmp/foo/1.tiff', 'complete.tif']),
         call.debug('%s', stdout),
         call.debug('%s', stdout),
     ]
 
     assert call(
-        ['tiffcp', '1.tiff', 'complete.tif'],
+        ['tiffcp', '/tmp/foo/1.tiff', 'complete.tif'],
         stdout=mock_subprocess.PIPE,
         stderr=mock_subprocess.STDOUT
     ) in mock_subprocess.mock_calls
@@ -297,31 +299,33 @@ def test_create_pdf_exception(mock_os, mock_log, document_config):
 
 
 @patch('mayan_feeder.document.datetime', autospec=True)
-@patch('mayan_feeder.document.os', autospec=True)
+@patch('mayan_feeder.document.os.path.isfile', autospec=True)
+@patch('mayan_feeder.document.os.listdir', autospec=True)
 @patch('mayan_feeder.document.tempfile.mkdtemp', autospec=True)
 @patch('mayan_feeder.document.LOG')
 def test_pages(
         mock_log,
         mock_mkdtemp,
-        mock_os,
+        mock_listdir,
+        mock_isfile,
         mock_datetime,
         document_config
 ):
-    mock_mkdtemp.return_value = sentinel.tmpdir
+    mock_mkdtemp.return_value = '/tmp/foo'
 
-    mock_os.path.isfile.return_value = True
+    mock_isfile.return_value = True
 
-    mock_os.listdir.return_value = ['1.tiff', '2.tiff']
+    mock_listdir.return_value = ['1.tiff', '2.tiff']
 
     mock_datetime.now.return_value = datetime(2018, 1, 15, 0, 0, 0, 0)
 
     document = Document(*document_config)
 
-    assert document.pages == ['1.tiff', '2.tiff']
+    assert document.pages == ['/tmp/foo/1.tiff', '/tmp/foo/2.tiff']
 
     assert mock_log.debug.call_args_list == [
         call('creating mayan handler...'),
-        call('found: \n%s', '1.tiff\n2.tiff')
+        call('found: \n%s', '/tmp/foo/1.tiff\n/tmp/foo/2.tiff')
     ]
 
 

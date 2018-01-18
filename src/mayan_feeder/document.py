@@ -187,7 +187,12 @@ class Document(object):
     def pages(self) -> List[str]:
         """List of all scanned pages."""
         page_list = [
-            str(i)
+            str(
+                os.path.join(
+                    self.tempdir,
+                    i
+                )
+            )
             for i in os.listdir(self.tempdir)
             if os.path.isfile(
                 os.path.join(

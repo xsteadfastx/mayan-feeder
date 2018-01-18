@@ -179,6 +179,7 @@ class Document(object):
         try:
             for page in self.pages:
                 if utils.is_blank(page):
+                    LOG.debug('removing blank: %s', page)
                     os.remove(page)
         except BaseException as exception:
             LOG.exception(str(exception))

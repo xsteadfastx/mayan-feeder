@@ -249,7 +249,10 @@ def test_create_pdf(
     assert mock_log.mock_calls == [
         call.debug('creating mayan handler...'),
         call.debug('found: \n%s', '/tmp/foo/1.tiff'),
-        call.debug('command list: %s', ['tiffcp', '/tmp/foo/1.tiff', 'complete.tif']),
+        call.debug(
+            'command list: %s',
+            ['tiffcp', '/tmp/foo/1.tiff', 'complete.tif']
+        ),
         call.debug('%s', stdout),
         call.debug('%s', stdout),
     ]
@@ -329,6 +332,7 @@ def test_pages(
     ]
 
 
+@patch('mayan_feeder.document.LOG')
 @patch('mayan_feeder.document.Document.pages')
 @patch('mayan_feeder.document.os.remove')
 @patch('mayan_feeder.document.utils.is_blank')
@@ -338,6 +342,7 @@ def test_remove_blanks(
         mock_is_blank,
         mock_remove,
         mock_pages,  # pylint: disable=unused-argument
+        mock_log,
         document_config,
 ):
     mock_mkdtemp.return_value = sentinel.tmpdir
@@ -351,6 +356,11 @@ def test_remove_blanks(
     document.remove_blanks()
 
     mock_remove.assert_called_once_with('1.tiff')
+
+    assert mock_log.debug.call_args_list == [
+        call('creating mayan handler...'),
+        call('removing blank: %s', '1.tiff')
+    ]
 
 
 @patch('mayan_feeder.document.LOG')

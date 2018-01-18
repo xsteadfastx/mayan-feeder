@@ -15,6 +15,7 @@ REQUIRES = [
     'flask-bootstrap',
     'flask-socketio',
     'flask-wtf',
+    'pillow',
     'pyyaml',
     'requests',
     'typing',

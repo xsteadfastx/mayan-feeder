@@ -32,7 +32,7 @@ setup(
     package_dir={'': 'src'},
     packages=['mayan_feeder'],
     include_package_data=True,
-    install_requires=REQUIRES,
+    # install_requires=REQUIRES,
     entry_points={
         'console_scripts': [
             'mayanfeeder=mayan_feeder.cli:main'

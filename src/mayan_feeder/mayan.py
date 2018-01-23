@@ -9,6 +9,11 @@ from requests.auth import HTTPBasicAuth
 LOG = logging.getLogger(__name__)
 
 
+class CouldNotConnect(BaseException):
+    """Exception raises if cant connect to MayanEDMS."""
+    pass
+
+
 class MayanHandler(object):
     """Mayan Handler."""
 
@@ -115,17 +120,13 @@ class MayanHandler(object):
         return response
 
     @property
-    def is_available(self) -> bool:
+    def is_available(self) -> None:
         """Checking mayan availability."""
         LOG.info('checking if mayan is available...')
         try:
-            response = self.r_get('/api/rest')
+            data = self.r_get('/api/motd/messages/')
+            # pylint: disable=expression-not-assigned,pointless-statement
+            data['results']
 
-            if 'info' in response.keys():
-                return True
-
-            return False
-
-        except BaseException as exception:
-            LOG.exception(str(exception))
-            return False
+        except BaseException:
+            raise CouldNotConnect(f'Could not connect to {self.url}')

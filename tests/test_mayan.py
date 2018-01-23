@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring
+# pylint: disable=missing-docstring,pointless-statement
 
 from unittest.mock import patch
 
@@ -23,19 +23,9 @@ def test_create_url(endpoint, expected):
     assert handler.create_url(endpoint) == expected
 
 
-@pytest.mark.parametrize('response,expected', [
-    (
-        {'info': 'foo'},
-        True
-    ),
-    (
-        {},
-        False
-    )
-])
 @patch('mayan_feeder.mayan.MayanHandler.r_get')
-def test_is_available(mock_r_get, response, expected):
-    mock_r_get.return_value = response
+def test_is_available(mock_r_get):
+    mock_r_get.return_value = {'results': []}
 
     handler = mayan.MayanHandler(
         'http://foo.bar:81',
@@ -43,12 +33,28 @@ def test_is_available(mock_r_get, response, expected):
         'bar'
     )
 
-    assert handler.is_available is expected
+    handler.is_available
 
 
-@patch('mayan_feeder.mayan.LOG')
 @patch('mayan_feeder.mayan.MayanHandler.r_get')
-def test_is_available_exception(mock_r_get, mock_log):
+def test_is_available_empty_dict(mock_r_get):
+    mock_r_get.return_value = {}
+
+    handler = mayan.MayanHandler(
+        'http://foo.bar:81',
+        'foo',
+        'bar'
+    )
+
+    with pytest.raises(
+        mayan.CouldNotConnect,
+        message='Could not connect to http://foo.bar:81'
+    ):
+        handler.is_available
+
+
+@patch('mayan_feeder.mayan.MayanHandler.r_get')
+def test_is_available_exception(mock_r_get):
     mock_r_get.side_effect = IndexError('foo bar')
 
     handler = mayan.MayanHandler(
@@ -57,6 +63,8 @@ def test_is_available_exception(mock_r_get, mock_log):
         'bar'
     )
 
-    assert handler.is_available is False
-
-    mock_log.exception.assert_called_with('foo bar')
+    with pytest.raises(
+        mayan.CouldNotConnect,
+        message='Could not connect to http://foo.bar:81'
+    ):
+        handler.is_available

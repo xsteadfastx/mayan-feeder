@@ -6,6 +6,8 @@ import threading
 
 import click
 
+from mayan_feeder import utils
+
 LOG = logging.getLogger(__name__)
 
 
@@ -31,7 +33,7 @@ def main(verbose: int) -> None:
     else:
         logging.getLogger().setLevel(logging.INFO)
 
-    from mayan_feeder import logger, utils, web
+    from mayan_feeder import logger, web, config, mayan
 
     logging.getLogger().addHandler(logger.SocketIOHandler())
 
@@ -49,6 +51,17 @@ def main(verbose: int) -> None:
                 'Please install convert and scanimage'
             )
         )
+        sys.exit(1)
+
+    config_dict = config.get()
+    try:
+        mayan.MayanHandler(
+            config_dict['mayan']['url'],
+            config_dict['mayan']['username'],
+            config_dict['mayan']['password']
+        ).is_available
+    except mayan.CouldNotConnect:
+        LOG.error('Could not connect to MayanEDMS')
         sys.exit(1)
 
     LOG.debug('Adding timer thread to start Browser...')

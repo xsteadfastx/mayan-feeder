@@ -5,7 +5,7 @@
 import logging
 import sys
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict
 
 import yaml
 from click import echo
@@ -13,7 +13,7 @@ from click import echo
 LOG = logging.getLogger(__name__)
 
 
-def get() -> Union[Dict[str, Dict[str, str]], None]:
+def get() -> Dict[str, Dict[str, str]]:
     """Get config."""
     config_file = Path.home().joinpath('.mayanfeeder.yaml')
 

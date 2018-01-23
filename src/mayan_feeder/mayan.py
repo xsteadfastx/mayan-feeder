@@ -113,3 +113,19 @@ class MayanHandler(object):
             )
 
         return response
+
+    @property
+    def is_available(self) -> bool:
+        """Checking mayan availability."""
+        LOG.info('checking if mayan is available...')
+        try:
+            response = self.r_get('/api/rest')
+
+            if 'info' in response.keys():
+                return True
+
+            return False
+
+        except BaseException as exception:
+            LOG.exception(str(exception))
+            return False

@@ -7,15 +7,15 @@ name = "pypi"
 
 [packages]
 
-flask = "*"
-flask-socketio = "*"
+Flask = "*"
+Flask-SocketIO = "*"
 requests = "*"
-flask-bootstrap = "*"
-flask-wtf = "*"
+Flask-Bootstrap = "*"
+Flask-WTF = "*"
 click = "*"
 attrs = "*"
-pyyaml = "*"
-pillow = "*"
+PyYAML = "*"
+Pillow = "*"
 
 
 [dev-packages]
@@ -26,5 +26,4 @@ mypy = "*"
 tox = "*"
 pytest = "*"
 coverage = "*"
-pex = "*"
 codecov = "*"

@@ -9,9 +9,9 @@
             "os_name": "posix",
             "platform_machine": "x86_64",
             "platform_python_implementation": "CPython",
-            "platform_release": "4.13.0-21-generic",
+            "platform_release": "4.4.0-109-generic",
             "platform_system": "Linux",
-            "platform_version": "#24-Ubuntu SMP Mon Dec 18 17:29:16 UTC 2017",
+            "platform_version": "#132-Ubuntu SMP Tue Jan 9 19:52:39 UTC 2018",
             "python_full_version": "3.6.4",
             "python_version": "3.6",
             "sys_platform": "linux"
@@ -280,10 +280,10 @@
         },
         "codecov": {
             "hashes": [
-                "sha256:e89fae06665eb574de9a8233a359ca03ca9f7d500436cfb74c6f699fbc4d7f5b",
-                "sha256:ba77d1438683daeae122962776c38fb88c5dc9b12dd0b40b3d1a98fef8219727"
+                "sha256:ae00d68e18d8a20e9c3288ba3875ae03db3a8e892115bf9b83ef20507732bed4",
+                "sha256:8ed8b7c6791010d359baed66f84f061bba5bd41174bf324c31311e8737602788"
             ],
-            "version": "==2.0.14"
+            "version": "==2.0.15"
         },
         "coverage": {
             "hashes": [
@@ -489,10 +489,10 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:b84878865558194630c6147f44bdaef27222a9f153bbd4a08908b16bf285e0b1",
-                "sha256:53548280ede7818f4dc2ad96608b9f08ae2cc2ca3874f2ceb6f97e3583f25bc4"
+                "sha256:95fa025cd6deb5d937e04e368a00552332b58cae23f63b76c8c540ff1733ab6d",
+                "sha256:6074ea3b9c999bd6d0df5fa9d12dd95ccd23550df2a582f5f5b848331d2e82ca"
             ],
-            "version": "==3.3.2"
+            "version": "==3.4.0"
         },
         "requests": {
             "hashes": [

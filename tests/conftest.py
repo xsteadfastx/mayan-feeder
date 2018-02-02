@@ -60,3 +60,11 @@ def settings():
             'password': 'bar'
         }
     }
+
+
+@pytest.fixture
+def web_app():
+    from mayan_feeder import web
+    web.APP.testing = True
+    app = web.APP.test_client()
+    yield app

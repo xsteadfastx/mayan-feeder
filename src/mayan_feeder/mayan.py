@@ -72,6 +72,7 @@ class MayanHandler(object):
 
         return response_data
 
+    @property
     def cabinets(self) -> Dict:  # pragma: no cover
         """Getting all cabinets from API."""
         LOG.debug('get cabinets from api...')

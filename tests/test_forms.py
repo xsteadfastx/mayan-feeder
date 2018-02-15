@@ -9,7 +9,7 @@ from mayan_feeder import forms, web
 @patch('mayan_feeder.forms.config', autospec=True)
 def test_create_cabinets(mock_config, mock_mayan, cabinets_list_0, settings):
     mock_config.get.return_value = settings
-    mock_mayan.MayanHandler.return_value.cabinets.return_value = \
+    mock_mayan.MayanHandler.return_value.cabinets = \
         cabinets_list_0
 
     assert forms.create_cabinets() == [

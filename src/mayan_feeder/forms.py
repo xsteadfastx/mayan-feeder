@@ -24,7 +24,7 @@ def create_cabinets() -> Union[List[Tuple[str, str]], None]:
 
         return [
             (str(i['id']), i['label'])
-            for i in m_handler.cabinets()['results']
+            for i in m_handler.cabinets['results']
         ]
 
     return None

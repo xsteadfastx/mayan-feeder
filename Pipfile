@@ -7,15 +7,16 @@ name = "pypi"
 
 [packages]
 
-flask = "*"
-flask-socketio = "*"
+Flask = "*"
+Flask-SocketIO = "*"
 requests = "*"
-flask-bootstrap = "*"
-flask-wtf = "*"
+Flask-Bootstrap = "*"
+Flask-WTF = "*"
 click = "*"
 attrs = "*"
-pyyaml = "*"
-pillow = "*"
+PyYAML = "*"
+Pillow = "*"
+prompt_toolkit = {git = "https://github.com/jonathanslenders/python-prompt-toolkit.git", editable = true}
 
 
 [dev-packages]
@@ -27,4 +28,3 @@ tox = "*"
 pytest = "*"
 coverage = "*"
 codecov = "*"
-bpython = "*"

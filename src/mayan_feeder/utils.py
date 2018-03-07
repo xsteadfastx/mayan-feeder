@@ -56,3 +56,21 @@ def is_blank(image_file: str) -> bool:
         return True
 
     return False
+
+
+def selfcheck() -> None:
+    """Run all checks and exit if something is missing."""
+    if not commands_available(
+            [
+                'scanimage',
+                'tiffcp',
+                'tiff2pdf',
+            ]
+    ):
+        LOG.error(
+            (
+                'Could not find needed commands! '
+                'Please install convert and scanimage'
+            )
+        )
+        raise SystemExit(1)

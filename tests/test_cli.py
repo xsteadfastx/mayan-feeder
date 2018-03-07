@@ -10,32 +10,6 @@ from mayan_feeder import cli
 from mayan_feeder.mayan import CouldNotConnect
 
 
-@patch('mayan_feeder.cli.LOG')
-@patch('mayan_feeder.cli.utils')
-def test_main_commands_not_available(mock_utils, mock_log):
-
-    mock_utils.commands_available.return_value = False
-
-    runner = CliRunner()
-
-    result = runner.invoke(cli.main, [])
-
-    assert mock_utils.commands_available.call_args_list == [
-        call(['scanimage', 'tiffcp', 'tiff2pdf'])
-    ]
-
-    assert result.exit_code == 1
-
-    assert mock_log.error.call_args_list == [
-        call(
-            (
-                'Could not find needed commands! '
-                'Please install convert and scanimage'
-            )
-        )
-    ]
-
-
 @pytest.mark.parametrize('verbose_level,expected', [
     ('-v', logging.INFO),
     ('-vv', logging.DEBUG),

@@ -11,47 +11,38 @@ from mayan_feeder import utils
 LOG = logging.getLogger(__name__)
 
 
-@click.command()
+@click.group()
 @click.option(
     '-v', '--verbose',
     count=True,
     help='Can be used multiply times.'
 )
 @click.version_option()
-def main(verbose: int) -> None:
+def cli(verbose: int) -> None:
     """Feed documents into MayanEDMS."""
-
     # setting up logging
     logging.basicConfig()
-
-    logging.getLogger('werkzeug').setLevel(logging.CRITICAL)
-    logging.getLogger('socketio').setLevel(logging.CRITICAL)
-    logging.getLogger('engineio').setLevel(logging.CRITICAL)
 
     if verbose >= 2:
         logging.getLogger().setLevel(logging.DEBUG)
     else:
         logging.getLogger().setLevel(logging.INFO)
 
+
+@cli.command()
+def browser() -> None:
+    """Opens browser to feed."""
+
+    logging.getLogger('werkzeug').setLevel(logging.CRITICAL)
+    logging.getLogger('socketio').setLevel(logging.CRITICAL)
+    logging.getLogger('engineio').setLevel(logging.CRITICAL)
+
     from mayan_feeder import logger, web, config, mayan
 
     logging.getLogger().addHandler(logger.SocketIOHandler())
 
     # selfcheck if all needed commands are available
-    if not utils.commands_available(
-            [
-                'scanimage',
-                'tiffcp',
-                'tiff2pdf',
-            ]
-    ):
-        LOG.error(
-            (
-                'Could not find needed commands! '
-                'Please install convert and scanimage'
-            )
-        )
-        sys.exit(1)
+    utils.selfcheck()
 
     config_dict = config.get()
     try:
@@ -73,3 +64,9 @@ def main(verbose: int) -> None:
     LOG.info('Starting the feeder...')
 
     web.SOCKETIO.run(web.APP)
+
+
+@cli.command()
+def console():
+    """Opens console to feed."""
+    pass

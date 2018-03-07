@@ -35,7 +35,7 @@ setup(
     # install_requires=REQUIRES,
     entry_points={
         'console_scripts': [
-            'mayanfeeder=mayan_feeder.cli:main'
+            'mayanfeeder=mayan_feeder.cli:cli'
         ]
     }
 )

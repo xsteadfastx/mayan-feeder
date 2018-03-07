@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring
+# pylint: disable=missing-docstring, invalid-name
 
 import os
 import re
@@ -60,3 +60,27 @@ def test_is_blank(image_file):
     )
 
     assert utils.is_blank(file_full_path) == expected
+
+
+@patch('mayan_feeder.utils.LOG')
+@patch('mayan_feeder.utils.commands_available')
+def test_selfcheck_commands_not_available(mock_commands_available, mock_log):
+    mock_commands_available.return_value = False
+
+    with pytest.raises(SystemExit) as excinfo:
+        utils.selfcheck()
+
+    assert excinfo.value.code == 1
+
+    assert mock_commands_available.call_args_list == [
+        call(['scanimage', 'tiffcp', 'tiff2pdf'])
+    ]
+
+    assert mock_log.error.call_args_list == [
+        call(
+            (
+                'Could not find needed commands! '
+                'Please install convert and scanimage'
+            )
+        )
+    ]

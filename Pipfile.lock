@@ -9,9 +9,9 @@
             "os_name": "posix",
             "platform_machine": "x86_64",
             "platform_python_implementation": "CPython",
-            "platform_release": "4.13.0-21-generic",
+            "platform_release": "4.13.0-36-generic",
             "platform_system": "Linux",
-            "platform_version": "#24-Ubuntu SMP Mon Dec 18 17:29:16 UTC 2017",
+            "platform_version": "#40-Ubuntu SMP Fri Feb 16 20:07:48 UTC 2018",
             "python_full_version": "3.6.4",
             "python_version": "3.6",
             "sys_platform": "linux"
@@ -76,10 +76,10 @@
         },
         "flask-socketio": {
             "hashes": [
-                "sha256:b53e8f90430f251453ac50a4c46425e595f26398341f56131b77e5f8a288cf90",
-                "sha256:df23f790db8529c543bd0b54165215c342cf6955a4a1f605650e759197a46d59"
+                "sha256:10939c523b63add65bdce3a431323685f61c1115d08122c49f8c4ecd53741bcc",
+                "sha256:de9d36acca2bceaf5546442d7032ea74b40463f4f396965d73529db5770cc83e"
             ],
-            "version": "==2.9.3"
+            "version": "==2.9.4"
         },
         "flask-wtf": {
             "hashes": [
@@ -443,10 +443,10 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:95fa025cd6deb5d937e04e368a00552332b58cae23f63b76c8c540ff1733ab6d",
-                "sha256:6074ea3b9c999bd6d0df5fa9d12dd95ccd23550df2a582f5f5b848331d2e82ca"
+                "sha256:8970e25181e15ab14ae895599a0a0e0ade7d1f1c4c8ca1072ce16f25526a184d",
+                "sha256:9ddcb879c8cc859d2540204b5399011f842e5e8823674bf429f70ada281b3cc6"
             ],
-            "version": "==3.4.0"
+            "version": "==3.4.1"
         },
         "requests": {
             "hashes": [

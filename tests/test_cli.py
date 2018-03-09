@@ -7,42 +7,20 @@ import pytest
 from click.testing import CliRunner
 
 from mayan_feeder import cli
-from mayan_feeder.mayan import CouldNotConnect
 
 
-@pytest.mark.parametrize('verbose_level,expected', [
-    ('-v', logging.INFO),
-    ('-vv', logging.DEBUG),
-    ('-vvv', logging.DEBUG),
-])
 @patch('mayan_feeder.cli.threading')
+@patch('mayan_feeder.web')
 @patch('mayan_feeder.cli.LOG')
 @patch('mayan_feeder.cli.utils')
-@patch('mayan_feeder.web')
-@patch('mayan_feeder.config')
-@patch('mayan_feeder.mayan')
-def test_main_verbose(
-        mock_mayan,
-        mock_config,
-        mock_web,
-        mock_utils,
-        mock_log,
-        mock_threading,
-        verbose_level,
-        expected,
-        settings,
-):
-    mock_utils.commands_available.return_value = True
-    mock_config.get.return_value = settings
-    mock_mayan.MayanHandler.is_available.return_value = None
+def test_browser(mock_utils, mock_log, mock_web, mock_threading):
+
+    mock_utils.selfcheck.retuen_value = None
 
     runner = CliRunner()
-
-    result = runner.invoke(cli.main, [verbose_level])
+    result = runner.invoke(cli.cli, ['browser'])
 
     assert result.exit_code == 0
-
-    assert logging.getLogger().getEffectiveLevel() == expected
 
     mock_threading.Timer.assert_called_with(1.25, mock_utils.open_browser)
 
@@ -54,25 +32,19 @@ def test_main_verbose(
     ]
 
 
-@patch('mayan_feeder.cli.LOG')
-@patch('mayan_feeder.cli.utils')
-@patch('mayan_feeder.config')
-@patch('mayan_feeder.mayan')
-def test_main_couldnotconnect(
-        mock_mayan,
-        mock_config,
-        mock_utils,
-        mock_log,
-        settings,
-):
-    mock_utils.commands_available.return_value = True
-    mock_config.get.return_value = settings
-    mock_mayan.CouldNotConnect = CouldNotConnect
-    mock_mayan.MayanHandler.side_effect = CouldNotConnect
+# pylint: disable=unused-variable
+@pytest.mark.parametrize('verbose_level,expected', [
+    ('-v', logging.INFO),
+    ('-vv', logging.DEBUG),
+    ('-vvv', logging.DEBUG),
+])
+def test_cli_verbose(verbose_level, expected):
+
+    @cli.cli.command()
+    def verbose():
+        pass
 
     runner = CliRunner()
-    result = runner.invoke(cli.main, [])
+    runner.invoke(cli.cli, [verbose_level, 'verbose'])
 
-    assert result.exit_code == 1
-
-    mock_log.error.assert_called_with('Could not connect to MayanEDMS')
+    assert logging.getLogger().getEffectiveLevel() == expected

@@ -99,6 +99,3 @@ class Console(object):
                 value = self.dialog_scan()
             elif value == 'reset':
                 value = self.dialog_reset()
-
-
-Console().run()

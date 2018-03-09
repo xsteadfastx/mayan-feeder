@@ -8,6 +8,7 @@ from unittest.mock import call, patch
 import pytest
 
 from mayan_feeder import utils
+from mayan_feeder.mayan import CouldNotConnect
 
 
 @patch('mayan_feeder.utils.LOG')
@@ -84,3 +85,27 @@ def test_selfcheck_commands_not_available(mock_commands_available, mock_log):
             )
         )
     ]
+
+
+@patch('mayan_feeder.utils.mayan')
+@patch('mayan_feeder.utils.config')
+@patch('mayan_feeder.utils.commands_available')
+@patch('mayan_feeder.utils.LOG')
+def test_selfcheck_coulnotconnect(
+        mock_log,
+        mock_commands_available,
+        mock_config,
+        mock_mayan,
+        settings
+):
+    mock_commands_available.return_value = True
+    mock_config.get.return_value = settings
+    mock_mayan.CouldNotConnect = CouldNotConnect
+    mock_mayan.MayanHandler.side_effect = CouldNotConnect
+
+    with pytest.raises(SystemExit) as excinfo:
+        utils.selfcheck()
+
+    assert excinfo.value.code == 1
+
+    mock_log.error.assert_called_with('Could not connect to MayanEDMS')

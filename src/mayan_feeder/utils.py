@@ -8,6 +8,9 @@ from typing import List
 
 from PIL import Image
 
+from mayan_feeder import config, mayan
+
+
 LOG = logging.getLogger(__name__)
 
 
@@ -73,4 +76,15 @@ def selfcheck() -> None:
                 'Please install convert and scanimage'
             )
         )
+        raise SystemExit(1)
+
+    config_dict = config.get()
+    try:
+        mayan.MayanHandler(
+            config_dict['mayan']['url'],
+            config_dict['mayan']['username'],
+            config_dict['mayan']['password']
+        ).is_available
+    except mayan.CouldNotConnect:
+        LOG.error('Could not connect to MayanEDMS')
         raise SystemExit(1)

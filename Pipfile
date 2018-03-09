@@ -13,7 +13,6 @@ requests = "*"
 Flask-Bootstrap = "*"
 Flask-WTF = "*"
 click = "*"
-attrs = "*"
 PyYAML = "*"
 Pillow = "*"
 prompt_toolkit = {git = "https://github.com/jonathanslenders/python-prompt-toolkit.git", editable = true}

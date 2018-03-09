@@ -10,46 +10,35 @@ from threading import Thread
 from time import sleep
 from typing import List
 
-import attr
-
 from mayan_feeder import mayan, utils
 
 LOG = logging.getLogger(__name__)
 
 
-@attr.s
+# pylint: disable=too-many-instance-attributes
 class Document(object):
     """Document object."""
 
-    url: str = attr.ib()
-    username: str = attr.ib()
-    password: str = attr.ib()
+    def __init__(
+            self,
+            url: str,
+            username: str,
+            password: str,
+            cabinets: List[str]
+    ) -> None:
+        self.url = url
+        self.username = username
+        self.password = password
 
-    cabinets: List[str] = attr.ib()
+        self.cabinets = cabinets
 
-    now: datetime = attr.ib(init=False)
-
-    tempdir: str = attr.ib(init=False)
-
-    pdf_filename: str = attr.ib(init=False)
-    pdf_file_path: str = attr.ib(init=False)
-    document_id: int = attr.ib(init=False)
-
-    mayan_handler: mayan.MayanHandler = attr.ib(init=False)
-
-    def __attrs_post_init__(self) -> None:
-        # time
         self.now = datetime.now()
 
-        # filename
-        self.pdf_filename = '{}.pdf'.format(self.now.strftime('%Y%m%d%H%M%S'))
-        # tempdir
         self.tempdir = str(tempfile.mkdtemp())
 
-        # pdf fullpath
+        self.pdf_filename = '{}.pdf'.format(self.now.strftime('%Y%m%d%H%M%S'))
         self.pdf_file_path = os.path.join(self.tempdir, self.pdf_filename)
 
-        # mayan
         LOG.debug('creating mayan handler...')
         self.mayan_handler = mayan.MayanHandler(
             self.url,
@@ -61,6 +50,7 @@ class Document(object):
         """Upload to Mayan EDMS."""
         try:
             response = self.mayan_handler.upload(self.pdf_file_path)
+            # pylint: disable=attribute-defined-outside-init
             self.document_id = int(response['id'])
         except BaseException as exception:
             LOG.exception(str(exception))

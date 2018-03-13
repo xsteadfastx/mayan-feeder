@@ -9,7 +9,6 @@ AUTHOR = 'Marvin Steadfast'
 AUTHOR_EMAIL = 'marvin@xsteadfastx.org'
 
 REQUIRES = [
-    'attrs',
     'click',
     'flask',
     'flask-bootstrap',

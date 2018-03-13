@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d2e9069891b2befe96c90c562ce2ad7d19dad2ac1ab2d4a61d9dfccb764dd2a4"
+            "sha256": "8aa524502fbcebb2eb45d4482d3889100229a4cc7857664ef56c8554673410ca"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -56,10 +56,10 @@
         },
         "flask-socketio": {
             "hashes": [
-                "sha256:e45665e6ddab07b1c92cadc21c656b95635abc87ddb89a5fe1050c17588afffd",
-                "sha256:fdf729e9c0a1fc86def4471876accaa5e91bd38838c7ddf97b405008f7b6b7af"
+                "sha256:be85842328f7847f511cf8cd828739884403b86ab5b0d576dae4241dd920b415",
+                "sha256:f49edfd3a44458fbb9f7a04a57069ffc0c37f000495194f943a25d370436bb69"
             ],
-            "version": "==2.9.5"
+            "version": "==2.9.6"
         },
         "flask-wtf": {
             "hashes": [
@@ -93,6 +93,11 @@
                 "sha256:a6be69091dac236ea9c6bc7d012beab42010fa914c459791d627dad4910eb665"
             ],
             "version": "==1.0"
+        },
+        "mayan-feeder": {
+            "editable": true,
+            "git": "git@github.com:xsteadfastx/mayan-feeder.git",
+            "ref": "7a08ea66543810ec90b75fabdae9e504443bd9bd"
         },
         "pillow": {
             "hashes": [
@@ -310,6 +315,10 @@
                 "sha256:f8a923a85cb099422ad5a2e345fe877bbc89a8a8b23235824a93488150e45f6e"
             ],
             "version": "==4.5.1"
+        },
+        "e1839a8": {
+            "editable": true,
+            "path": "."
         },
         "flake8": {
             "hashes": [

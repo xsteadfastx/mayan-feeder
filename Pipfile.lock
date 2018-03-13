@@ -97,7 +97,7 @@
         "mayan-feeder": {
             "editable": true,
             "git": "git@github.com:xsteadfastx/mayan-feeder.git",
-            "ref": "7a08ea66543810ec90b75fabdae9e504443bd9bd"
+            "ref": "55533fc5dac5a2a3a91d8e3c24f622f6e4ba8450"
         },
         "pillow": {
             "hashes": [

@@ -1,12 +1,9 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
 flask = "*"
 flask-socketio = "*"
 requests = "*"
@@ -17,9 +14,7 @@ pyyaml = "*"
 pillow = "*"
 prompt-toolkit = {git = "https://github.com/jonathanslenders/python-prompt-toolkit.git", editable = true}
 
-
 [dev-packages]
-
 "flake8" = "*"
 pylint = "*"
 mypy = "*"
@@ -27,3 +22,4 @@ tox = "*"
 pytest = "*"
 coverage = "*"
 codecov = "*"
+"e1839a8" = {path = ".", editable = true}

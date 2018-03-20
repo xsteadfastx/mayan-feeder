@@ -1,4 +1,4 @@
-.PHONY: clean env test
+.PHONY: clean env test update
 
 clean:
 	find . -name '*.pyc' -exec rm -f {} +
@@ -12,3 +12,7 @@ env:
 
 test:
 	pipenv run tox
+
+update:
+	pipenv update --dev
+	@grep mayan-feeder Pipfile.lock > /dev/null && pipenv uninstall mayan_feeder || exit 0

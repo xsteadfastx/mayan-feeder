@@ -8,7 +8,7 @@ clean:
 	pipenv --rm
 
 env:
-	pipenv install --python 3.6.4 --dev
+	pipenv install --python 3.6.5 --dev
 
 test:
 	pipenv run tox

@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring, protected-access
+# pylint: disable=missing-docstring, protected-access, redefined-outer-name
 
 from unittest.mock import patch
 
@@ -8,8 +8,15 @@ from mayan_feeder import console
 
 
 @pytest.fixture
-def console_obj():
-    pass
+def console_obj(settings, cabinets_list_0):
+    with patch('mayan_feeder.console.mayan') as mock_mayan:
+        with patch('mayan_feeder.console.config') as mock_config:
+
+            mock_config.get.return_value = settings
+            mock_mayan.MayanHandler().cabinets = cabinets_list_0
+
+            con = console.Console()
+            yield con
 
 
 @patch('mayan_feeder.console.mayan')
@@ -34,5 +41,11 @@ def test_init(mock_config, mock_mayan, settings, cabinets_list_0):
     )
 
 
-def test_dialog_choose_cabinets():
-    pass
+@patch('mayan_feeder.console.radiolist_dialog')
+def test_dialog_choose_cabinets(mock_radiolist_dialog, console_obj):
+    assert console_obj.dialog_choose_cabinets() == 'main'
+
+    mock_radiolist_dialog.assert_called_with(
+        title='Choose cabinet',
+        values=[(1, 'Ehmener Str. 30'), (2, 'Gesundheit')]
+    )

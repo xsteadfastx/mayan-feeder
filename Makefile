@@ -11,7 +11,7 @@ env:
 	pipenv install --python 3.6.5 --dev
 
 test:
-	pipenv run tox
+	pipenv run tox -r
 
 update:
 	pipenv update --dev

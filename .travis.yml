@@ -19,9 +19,6 @@ matrix:
     - python: '3.6'
       env: TOXENV=mypy
 
-    - python: '3.6'
-      env: TOXENV=build-pex
-
 install:
   - travis_retry pip install tox
 

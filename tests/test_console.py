@@ -1,6 +1,6 @@
 # pylint: disable=missing-docstring, protected-access, redefined-outer-name
 
-from unittest.mock import patch
+from unittest.mock import patch, sentinel
 
 import pytest
 
@@ -73,7 +73,9 @@ def test_dialog_main(
 
     mock_html.return_value = 'this is html'
 
-    con.dialog_main()
+    mock_button_dialog.return_value = sentinel.dialog
+
+    assert con.dialog_main() == sentinel.dialog
 
     if text:
         mock_html.assert_called_with(text)

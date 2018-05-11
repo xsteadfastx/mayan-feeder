@@ -49,3 +49,45 @@ def test_dialog_choose_cabinets(mock_radiolist_dialog, console_obj):
         title='Choose cabinet',
         values=[(1, 'Ehmener Str. 30'), (2, 'Gesundheit')]
     )
+
+
+@pytest.mark.parametrize('cabinets_choosen,text', [
+    (None, ''),
+    ([2], '<strong>Cabinets</strong>:\nGesundheit')
+])
+@patch('mayan_feeder.console.button_dialog')
+@patch('mayan_feeder.console.HTML')
+def test_dialog_main(
+        mock_html,
+        mock_button_dialog,
+        cabinets_choosen,
+        text,
+        console_obj
+):
+    con = console_obj
+    con._cabinet_dict = {
+        1: 'Ehmener Str. 30',
+        2: 'Gesundheit'
+    }
+    con._cabinets_choosen = cabinets_choosen
+
+    mock_html.return_value = 'this is html'
+
+    con.dialog_main()
+
+    if text:
+        mock_html.assert_called_with(text)
+        text_arg = 'this is html'
+    else:
+        text_arg = ''
+
+    mock_button_dialog.assert_called_with(
+        title='Mayan-Feeder',
+        text=text_arg,
+        buttons=[
+            ('Add cabinet', 'cabinets'),
+            ('Scan', 'scan'),
+            ('Reset', 'reset'),
+            ('Exit', 'exit')
+        ]
+    )

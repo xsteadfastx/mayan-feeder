@@ -93,3 +93,20 @@ def test_dialog_main(
             ('Exit', 'exit')
         ]
     )
+
+
+@patch('mayan_feeder.console.document.Document')
+def test_dialog_scan(mock_document, console_obj):
+    con = console_obj
+    con._cabinets_choosen = [2]
+
+    assert con.dialog_scan() == 'main'
+
+    mock_document.return_value.process_thread.assert_called()
+
+    mock_document.assert_called_with(
+        'http://foo.bar:81',
+        'foo',
+        'bar',
+        [2]
+    )

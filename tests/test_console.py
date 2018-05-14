@@ -110,3 +110,12 @@ def test_dialog_scan(mock_document, console_obj):
         'bar',
         [2]
     )
+
+
+def test_dialog_reset(console_obj):
+    con = console_obj
+    con._cabinets_choosen = [2]
+
+    assert con.dialog_reset() == 'main'
+
+    assert con._cabinets_choosen == []

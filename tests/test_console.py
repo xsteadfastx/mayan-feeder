@@ -119,3 +119,22 @@ def test_dialog_reset(console_obj):
     assert con.dialog_reset() == 'main'
 
     assert con._cabinets_choosen == []
+
+
+@pytest.mark.parametrize('return_value,dialog', [
+    ('cabinets', 'mayan_feeder.console.Console.dialog_choose_cabinets'),
+    ('scan', 'mayan_feeder.console.Console.dialog_scan'),
+    ('reset', 'mayan_feeder.console.Console.dialog_reset')
+])
+@patch('mayan_feeder.console.Console.dialog_main')
+def test_run_new(mock_main, return_value, dialog, console_obj):
+    mock_main.return_value = return_value
+
+    con = console_obj
+
+    with patch(dialog) as mock_dialog:
+        mock_dialog.return_value = 'exit'
+
+        con.run()
+
+    mock_dialog.assert_called()
